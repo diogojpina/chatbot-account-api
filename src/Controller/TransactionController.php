@@ -79,11 +79,11 @@ class TransactionController extends ApiController {
 
 		$this->transactionRepo->add($transaction);
 
-		return $this->json(array('success' => false, 'data' => $transaction->toArray()));
+		return $this->json(array('success' => true, 'data' => $transaction->toArray()));
 	}
 
 	/**
-	* @Route("/transaction/withdraw/{accountNumber}", name="transaction_deposit", methods={"POST"})
+	* @Route("/transaction/withdraw/{accountNumber}", name="transaction_withdraw", methods={"POST"})
 	*/
 	public function withdraw($accountNumber, Request $request) {
 		$user = $this->getUser();
@@ -118,7 +118,7 @@ class TransactionController extends ApiController {
 
 		$this->transactionRepo->add($transaction);
 
-		return $this->json(array('success' => false, 'data' => $transaction->toArray()));
+		return $this->json(array('success' => true, 'data' => $transaction->toArray()));
 	}
 
 }
