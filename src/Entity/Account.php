@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\Request;
 
 /** @ORM\Entity
-* @ORM\Table(name="transaction")*/
+* @ORM\Table(name="account")*/
 class Account {
 	/**
 	* @ORM\Id()
@@ -17,9 +17,9 @@ class Account {
 
 	/**
 	* @ORM\ManyToOne(targetEntity="User", inversedBy="accounts")
-	* @ORM\JoinColumn(name="account_id", referencedColumnName="id")
+	* @ORM\JoinColumn(name="user_id", referencedColumnName="id")
 	*/
-	private $account;
+	private $user;
 
 	/** @ORM\Column(type="float") */
 	private $accountNumber;

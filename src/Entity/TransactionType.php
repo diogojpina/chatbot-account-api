@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\Request;
 
 /** @ORM\Entity
-* @ORM\Table(name="operation_type")*/
+* @ORM\Table(name="transaction_type")*/
 class OperationType {
 
 	/**
@@ -27,7 +27,7 @@ class OperationType {
 
 
 	/**
-	* @ORM\OneToMany(targetEntity="Transaction", mappedBy="operationType")
+	* @ORM\OneToMany(targetEntity="Transaction", mappedBy="transactionType")
 	**/
 	protected $transactions = null;	
 

@@ -46,7 +46,7 @@ class User implements UserInterface {
 	/**
 	* @ORM\OneToMany(targetEntity="Account", mappedBy="user")
 	**/
-	protected $accounts = null;
+	protected $accounts;
 
 
 	public function __construct() {	

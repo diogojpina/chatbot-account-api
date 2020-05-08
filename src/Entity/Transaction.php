@@ -51,7 +51,7 @@ class Transaction {
 	}
 			
 	public function setAccount($account) {
-		$this->stock = $stock;
+		$this->account = $account;
 	}
 
 	public function getType() {
