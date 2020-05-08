@@ -11,9 +11,9 @@ class MenuController extends ApiController {
 
 	private function getOptions() {
 		$options = array();
-		$options[1] = array('name' => 'Deposit', 'code' => 'deposit');
-		$options[2] = array('name' => 'Withdraw', 'code' => 'withdraw');
-		$options[3] = array('name' => 'Balance', 'code' => 'balance');
+		$options[] = array('name' => 'Deposit', 'code' => 'deposit');
+		$options[] = array('name' => 'Withdraw', 'code' => 'withdraw');
+		$options[] = array('name' => 'Balance', 'code' => 'balance');
 
 		return $options;
 	}
