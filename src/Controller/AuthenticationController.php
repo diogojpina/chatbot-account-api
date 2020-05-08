@@ -18,11 +18,11 @@ class AuthenticationController extends ApiController {
     public function login(Authentication $authentication, Request $request) {
         $request = $this->transformJsonBody($request);
 
-        $email = $request->request->get('email', '');
+        $username = $request->request->get('username', '');
         $pass = $request->request->get('password', '');
 
         
-        $user = $authentication->login($email, $pass);
+        $user = $authentication->login($username, $pass);
 
         if (!$user) {
             return $this->json(['success' => false, 'message' => 'User or password is wrong.']);   
