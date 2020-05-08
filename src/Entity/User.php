@@ -130,6 +130,15 @@ class User implements UserInterface {
 	public function getAccounts() {
 		return $this->accounts;
 	}
+
+	public function getAccountByNumber($accountNumber) {
+		foreach ($this->getAccounts() as $account) {
+			if ($account->getAccountNumber() == $accountNumber) {
+				return $account;
+			}
+		}
+		return null;
+	}
 				
 	public function addAccount($account) {
 		$this->accounts->add($account);

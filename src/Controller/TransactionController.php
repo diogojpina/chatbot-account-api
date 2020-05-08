@@ -15,14 +15,15 @@ class TransactionController extends ApiController {
 	public function balance($accountNumber) {
 		$user = $this->getUser();
 
-		foreach ($user->getAccounts() as $account) {
-			if ($account->getAccountNumber() == $accountNumber) {
-				return $this->json(array('success' => true, 'data' => $account->getBalance()));
-			}
+		$account = $user->getAccountByNumber($accountNumber);
+		if (!$account) {
+			return $this->json(array('success' => false, 'data' => 'Account not found!'));
 		}
 
-    	return $this->json(array('success' => false, 'data' => 'Account not found!'));
+		return $this->json(array('success' => true, 'data' => $account->getBalance()));
 	}
+
+
 
 
 
