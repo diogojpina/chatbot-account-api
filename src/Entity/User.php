@@ -43,8 +43,14 @@ class User implements UserInterface {
 	/** @ORM\Column(type="string", name="isActive") */
 	private $isActive;
 
+	/**
+	* @ORM\OneToMany(targetEntity="Account", mappedBy="user")
+	**/
+	protected $accounts = null;
+
 
 	public function __construct() {	
+		$this->accounts = new ArrayCollection();
 	}
 
 
@@ -116,10 +122,23 @@ class User implements UserInterface {
 	public function getIsActive() {
 		return $this->isActive;
 	}
-
 			
 	public function setIsActive ($isActive) {
 		$this->isActive = $isActive;
+	}
+
+	public function getAccounts() {
+		return $this->accounts;
+	}
+				
+	public function addAccount($account) {
+		$this->accounts->add($account);
+	}
+
+	public function removeAccount($account) {
+		if ($this->accounts->contains($account)) {
+			$this->accounts->removeElement($account);
+		}
 	}
 
 	public function toArray() :array {
@@ -132,6 +151,11 @@ class User implements UserInterface {
 		$data['token'] = $this->getToken();
 		$data['loginExpires'] = $this->getLoginExpires();
 		$data['isActive'] = $this->getIsActive();
+
+		$data['accounts'] = array();
+		foreach ($this->getAccounts() as $account) {
+			$data['account'][] = array('id' => $account->getId(), 'accountNumber' => $account->getAccountNumber());
+		}
 		
 		return $data;
 	}
