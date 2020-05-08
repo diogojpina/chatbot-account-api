@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 /** @ORM\Entity
 * @ORM\Table(name="transaction_type")*/
-class OperationType {
+class TransactionType {
 
 	/**
 	* @ORM\Id()
