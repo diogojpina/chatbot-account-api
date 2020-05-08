@@ -31,7 +31,7 @@ class Transaction {
 	private $value;
 
 	/** @ORM\Column(type="datetime") */
-	private $date;
+	private $datetime;
 
 	/**
 	* @ORM\OneToMany(targetEntity="Transaction", mappedBy="operationType")
