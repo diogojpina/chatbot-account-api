@@ -13,13 +13,19 @@ use App\Entity\TransactionType;
 use App\Repository\TransactionRepository;
 use App\Repository\TransactionTypeRepository;
 
+use App\Service\ExchangeService;
+
 class TransactionController extends ApiController {
 	private $transactionRepo;
 	private $transactionTypeRepo;
 
-	public function __construct(TransactionRepository $transactionRepo, TransactionTypeRepository $transactionTypeRepo) {
+	private $exchangeService;
+
+	public function __construct(TransactionRepository $transactionRepo, TransactionTypeRepository $transactionTypeRepo, ExchangeService $exchangeService) {
 		$this->transactionRepo = $transactionRepo;
 		$this->transactionTypeRepo = $transactionTypeRepo;
+
+		$this->exchangeService = $exchangeService;
 	}
 
 	/**
@@ -44,7 +50,8 @@ class TransactionController extends ApiController {
 
 		$this->transactionRepo->add($transaction);
 
-		return $this->json(array('success' => true, 'data' => $account->getBalance()));
+		$balance = $this->exchangeService->formatValue($user, $account->getBalance());
+		return $this->json(array('success' => true, 'data' => $balance));
 	}
 
 	/**
@@ -59,11 +66,25 @@ class TransactionController extends ApiController {
 		}
 
 		$request = $this->transformJsonBody($request);
-		$value = (float) $request->request->get('value', 0);
+		$value = $request->request->get('value', 0);
 
-		if ($value <= 0) {
+		$currencyMoney = $this->exchangeService->identifyCurrencyValue($user, $value);
+
+		if ($currencyMoney === false) {
+			return $this->json(array('success' => false, 'data' => 'Value invalid!'));
+		}
+
+		if ($currencyMoney['value'] <= 0) {
 			return $this->json(array('success' => false, 'data' => 'Value has to be positive!'));
 		}
+
+		$myCurrencyMoney = $this->exchangeService->exchange($user, $currencyMoney);
+
+		if ($currencyMoney === false) {
+			return $this->json(array('success' => false, 'data' => 'Problem to convert the currency!'));
+		}
+
+		$value = $myCurrencyMoney['value'];
 
 		$transactionType = $this->transactionTypeRepo->getByCode('deposit');
 		$dateTime = new \DateTime();
