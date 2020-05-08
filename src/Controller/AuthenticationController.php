@@ -46,4 +46,27 @@ class AuthenticationController extends ApiController {
         return $this->json(['success' => $success]);
     }
 
+    /**
+    * @Route("authentication/validate", name="auth_validate")
+    */
+    public function validate(Authentication $authentication, Request $request) {
+        $request = $this->transformJsonBody($request);
+
+        $headers = getallheaders();
+        $token = '';
+        if (array_key_exists('token', $headers)) {
+            $token = $headers['token'];
+        }
+        else if (array_key_exists('Authorization', $headers)) {
+            $token = $headers['Authorization'];
+        }
+        else {
+            $token = $request->request->get('token', '');
+        }
+
+        $success = $authentication->validate($token);
+
+        return $this->json(['success' => $success, 'message' => "User token expired! Login again."]);
+    }
+
 }

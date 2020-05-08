@@ -52,4 +52,16 @@ class Authentication {
 		return false;
 	}
 
+	public function validate($token) {
+		$where = array('token' => $token);
+
+		$repository = $this->entityManager->getRepository(User::class);
+		$user = $repository->findOneBy($where);
+		if ($user) {
+			return true;
+		}
+
+		return false;
+	}
+
 }

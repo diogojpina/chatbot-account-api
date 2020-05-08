@@ -82,4 +82,43 @@ class TransactionController extends ApiController {
 		return $this->json(array('success' => false, 'data' => $transaction->toArray()));
 	}
 
+	/**
+	* @Route("/transaction/withdraw/{accountNumber}", name="transaction_deposit", methods={"POST"})
+	*/
+	public function withdraw($accountNumber, Request $request) {
+		$user = $this->getUser();
+
+		$account = $user->getAccountByNumber($accountNumber);
+		if (!$account) {
+			return $this->json(array('success' => false, 'data' => 'Account not found!'));
+		}
+
+		$request = $this->transformJsonBody($request);
+		$value = (float) $request->request->get('value', 0);
+
+		if ($value <= 0) {
+			return $this->json(array('success' => false, 'data' => 'Value has to be positive!'));
+		}
+
+		if ($account->getBalance() < $value) {
+			return $this->json(array('success' => false, 'data' => 'Insufficient funds!'));
+		}
+
+		$transactionType = $this->transactionTypeRepo->getByCode('deposit');
+		$dateTime = new \DateTime();
+
+		$transaction = new Transaction();
+		$transaction->setAccount($account);
+		$transaction->setType($transactionType);
+		$transaction->setValue($value);
+		$transaction->setDatetime($dateTime);
+
+		$newBalance = $account->getBalance() - $value;
+		$account->setBalance($newBalance);
+
+		$this->transactionRepo->add($transaction);
+
+		return $this->json(array('success' => false, 'data' => $transaction->toArray()));
+	}
+
 }
