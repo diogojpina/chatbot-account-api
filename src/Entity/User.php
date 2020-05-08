@@ -56,7 +56,7 @@ class User implements UserInterface {
 		$this->id = $id;
 	}
 
-	public function getFirstame() {
+	public function getFirstname() {
 		return $this->firstname;
 	}
 			
@@ -124,8 +124,8 @@ class User implements UserInterface {
 
 	public function toArray() :array {
 		$data['id'] = $this->getId();
-		$data['firstname'] = $this->getFirstame();
-		$data['lastname'] = $this->getLastame();
+		$data['firstname'] = $this->getFirstname();
+		$data['lastname'] = $this->getLastname();
 		$data['currency'] = $this->getCurrency();
 		$data['email'] = $this->getEmail();
 		$data['password'] = $this->getPassword();
