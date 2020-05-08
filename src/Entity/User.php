@@ -141,8 +141,6 @@ class User implements UserInterface {
     }
 
 	public function getRoles(): array {
-        $role = $this->getRole();
-        
         $permissions = array();
         
         return array_unique($permissions);

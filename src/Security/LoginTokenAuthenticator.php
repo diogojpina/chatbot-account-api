@@ -25,11 +25,7 @@ class LoginTokenAuthenticator extends AbstractGuardAuthenticator {
      * to be skipped.
      */
     public function supports(Request $request) {
-        if ('auth_login' == $request->attributes->get('_route')) return false;
-        if ('auth_recovery' == $request->attributes->get('_route')) return false;
-        if ('auth_remember_code' == $request->attributes->get('_route')) return false;
-        if ('auth_login_shopclub' == $request->attributes->get('_route')) return false;
-        
+        if ('auth_login' == $request->attributes->get('_route')) return false;        
                 
         return true;
     }
