@@ -33,9 +33,9 @@ class MenuController extends ApiController {
 		$option = $request->request->get('option', '');
 		$options = $this->getOptions();
 
-		foreach ($options as $key => $optionValue) {
-			if ($key == $option) {
-				return $this->json(['success' => true, $key => $optionValue]);
+		foreach ($options as $optionValue) {
+			if ($optionValue['code'] == $option) {
+				return $this->json(['success' => true, 'option' => $optionValue]);
 			}
 		}
 
