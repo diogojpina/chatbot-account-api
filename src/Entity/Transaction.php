@@ -90,8 +90,8 @@ class Transaction {
 			$data['type']['id'] = $this->getType()->getId();
 		$data['value'] = $this->getValue();
 
-		$data['datetime'] = $this->getDate()->format("Y-m-d");
-		$data['datetimeFormated'] = $this->getDate()->format("m/d/Y");
+		$data['datetime'] = $this->getDateTime()->format("Y-m-d");
+		$data['datetimeFormated'] = $this->getDateTime()->format("m/d/Y");
 		
 		return $data;
 	}
