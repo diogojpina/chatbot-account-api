@@ -7,11 +7,9 @@ use App\Entity\User;
 
 class Authentication {
 	private $entityManager;
-	private $mailer;
 
-    public function __construct(EntityManagerInterface $entityManager, \Swift_Mailer $mailer) {
+    public function __construct(EntityManagerInterface $entityManager) {
         $this->entityManager = $entityManager;
-        $this->mailer = $mailer;
     }
 
 	public function login($email, $password) {
