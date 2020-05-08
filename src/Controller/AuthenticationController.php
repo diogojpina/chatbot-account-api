@@ -25,7 +25,7 @@ class AuthenticationController extends ApiController {
         $user = $authentication->login($email, $pass);
 
         if (!$user) {
-            return $this->json(['success' => false, 'message' => 'E-mail e/ou senha não conferem.']);   
+            return $this->json(['success' => false, 'message' => 'User or password is wrong.']);   
         }
 
         $data = $user->toArray();
