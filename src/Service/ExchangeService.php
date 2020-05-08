@@ -3,6 +3,9 @@ namespace App\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 
+use Symfony\Contracts\Cache\ItemInterface;
+use GuzzleHttp\Client;
+
 use App\Entity\User;
 
 class ExchangeService {
@@ -52,8 +55,34 @@ class ExchangeService {
     	}
     }
 
-    public function convertMoney($currencyFrom, $currencyTo, $value) {
-    	return 4 * $value;
+    public function convertMoney($from, $to, $amount) {
+    	$key = '8wX2UDShHqXNJx2SK2vGwMSHk4SY2V';
+    	$url = "currency.php?api_key=$key&from=$from&to=$to&amount=$amount";
+    	$client = new Client(['base_uri' => 'https://www.amdoren.com/api/', 'timeout'  => 10.0]);
+
+    	$response = $client->request('GET', $url);
+
+    	$data = json_decode($response->getBody()->getContents());
+
+    	if ($data->error > 0) {
+    		return false;
+    	}
+
+    	return $data->amount;
+    }
+
+    private function validateCode($code) {
+    	$accessKey = '4eecc466ac342f10e5805027cbce00e1';
+    	$url = "http://data.fixer.io/api/convert?access_key=$accessKey&from=$from&to=$to&amount=$amount";
+
+    	$value = $pool->get('my_cache_key', function (ItemInterface $item) {
+		    $item->expiresAfter(3600);
+
+		    // ... do some HTTP request or heavy computations
+		    $computedValue = 'foobar';
+
+		    return $computedValue;
+		});
     }
 
 }

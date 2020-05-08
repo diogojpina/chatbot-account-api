@@ -80,7 +80,7 @@ class TransactionController extends ApiController {
 
 		$myCurrencyMoney = $this->exchangeService->exchange($user, $currencyMoney);
 
-		if ($currencyMoney === false) {
+		if ($myCurrencyMoney === false) {
 			return $this->json(array('success' => false, 'data' => 'Problem to convert the currency!'));
 		}
 
