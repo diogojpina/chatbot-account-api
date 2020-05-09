@@ -3,8 +3,12 @@ namespace App\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
+
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 
 use App\Entity\User;
 
@@ -56,33 +60,79 @@ class ExchangeService {
     }
 
     public function convertMoney($from, $to, $amount) {
-    	$key = '8wX2UDShHqXNJx2SK2vGwMSHk4SY2V';
-    	$url = "currency.php?api_key=$key&from=$from&to=$to&amount=$amount";
-    	$client = new Client(['base_uri' => 'https://www.amdoren.com/api/', 'timeout'  => 10.0]);
+        if ($this->validateCode($from) === false || $this->validateCode($to) === false) {
+            return false;
+        }
 
-    	$response = $client->request('GET', $url);
+        $url = "https://api.exchangeratesapi.io/latest?base=$from&symbols=$to";
+        $client = new Client(['timeout'  => 10.0]);
 
-    	$data = json_decode($response->getBody()->getContents());
+        try {
+            $response = $client->request('GET', $url);
+            $data = json_decode($response->getBody()->getContents());
+        } catch (RequestException $e) {
+            if ($e->hasResponse()) {
+                $data = json_decode($e->getResponse()->getBody()->getContents());
+                if (isset($data->error)) {
+                    return false;
+                }
 
-    	if ($data->error > 0) {
-    		return false;
-    	}
+                return false;
+            }
+        }
 
-    	return $data->amount;
+        $rate = $data->rates->$to;
+
+        return $amount * $rate;
     }
 
+
     private function validateCode($code) {
-    	$accessKey = '4eecc466ac342f10e5805027cbce00e1';
-    	$url = "http://data.fixer.io/api/convert?access_key=$accessKey&from=$from&to=$to&amount=$amount";
+        $defaultLifetime = 7 * 24 * 60 * 60; // 7 days
+        $cache = new FilesystemAdapter('', $defaultLifetime, null); 
 
-    	$value = $pool->get('my_cache_key', function (ItemInterface $item) {
-		    $item->expiresAfter(3600);
+        $cacheKey = 'currency_' . $code;
+        $item = $cache->getItem($cacheKey);
+        if ($item->isHit()) {
+            return true;
+        }
 
-		    // ... do some HTTP request or heavy computations
-		    $computedValue = 'foobar';
+        $this->updateCache();
+        $item = $cache->getItem($cacheKey);
+        if ($item->isHit()) {
+            return true;
+        }
 
-		    return $computedValue;
-		});
+        return false;
+    }
+
+    private function updateCache() {
+        $url = "https://api.exchangeratesapi.io/latest?base=USD";
+        $client = new Client(['timeout'  => 10.0]);
+        
+        try {
+            $response = $client->request('GET', $url);
+            $data = json_decode($response->getBody()->getContents());
+        } catch (RequestException $e) {
+            if ($e->hasResponse()) {
+                $data = json_decode($e->getResponse()->getBody()->getContents());
+                if (isset($data->error)) {
+                    return false;
+                }
+
+                return false;
+            }
+        }
+
+        $defaultLifetime = 7 * 24 * 60 * 60; // 7 days
+        $cache = new FilesystemAdapter('', $defaultLifetime, null); 
+
+        foreach ($data->rates as $code => $rate) {
+            $cacheKey = 'currency_' . $code;
+            $item = $cache->getItem($cacheKey);
+            $item->set(true);
+            $cache->save($item);
+        }
     }
 
 }
