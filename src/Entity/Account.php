@@ -44,7 +44,7 @@ class Account {
 	}
 
 	public function getAccountNumber() {
-		return $this->accountNumber;
+		return str_pad($this->accountNumber, 6, "0", STR_PAD_LEFT);
 	}
 			
 	public function setAccountNumber($accountNumber) {

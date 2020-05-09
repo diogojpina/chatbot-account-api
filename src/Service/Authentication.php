@@ -12,10 +12,10 @@ class Authentication {
         $this->entityManager = $entityManager;
     }
 
-	public function login($email, $password) {
+	public function login($username, $password) {
 		$password = md5($password);
 
-		$where = array('email' => $email, 'password' => $password, 'isActive' => true);	
+		$where = array('username' => $username, 'password' => $password, 'isActive' => true);	
 
 		$repository = $this->entityManager->getRepository(User::class);
 		$user = $repository->findOneBy($where);

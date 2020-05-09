@@ -26,6 +26,7 @@ class LoginTokenAuthenticator extends AbstractGuardAuthenticator {
      */
     public function supports(Request $request) {
         if ('auth_login' == $request->attributes->get('_route')) return false;        
+        if ('auth_signup' == $request->attributes->get('_route')) return false;        
                 
         return true;
     }
@@ -35,14 +36,7 @@ class LoginTokenAuthenticator extends AbstractGuardAuthenticator {
      * be passed to getUser() as $credentials.
      */
     public function getCredentials(Request $request) {
-        //$token = $request->query->get('token', '');
-        
-        /*
-        $token = $request->headers->get('token', '');
-        if (!$token)
-            $token = $request->headers->get('token', '');
-        */
-        
+       
        
         $headers = getallheaders();
         $token = '';

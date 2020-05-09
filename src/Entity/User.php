@@ -29,7 +29,7 @@ class User implements UserInterface {
 	private $currency;
 
 	/** @ORM\Column(type="string") */
-	private $email;
+	private $username;
 
 	/** @ORM\Column(type="string") */
 	private $password;
@@ -40,11 +40,11 @@ class User implements UserInterface {
 	/** @ORM\Column(type="datetime", name="loginExpires") */
 	private $loginExpires;
 
-	/** @ORM\Column(type="string", name="isActive") */
-	private $isActive;
+	/** @ORM\Column(type="boolean", name="isActive") */
+	private $isActive = true;
 
 	/**
-	* @ORM\OneToMany(targetEntity="Account", mappedBy="user")
+	* @ORM\OneToMany(targetEntity="Account", mappedBy="user", cascade={"all"})
 	**/
 	protected $accounts;
 
@@ -86,13 +86,13 @@ class User implements UserInterface {
 		$this->currency = $currency;
 	}
 
-	public function getEmail() {
-		return $this->email;
+	public function getUsername() {
+		return $this->username;
 	}
 
 			
-	public function setEmail ($email) {
-		$this->email = $email;
+	public function setUsername($username) {
+		$this->username = $username;
 	}
 
 	public function getPassword() {
@@ -155,10 +155,10 @@ class User implements UserInterface {
 		$data['firstname'] = $this->getFirstname();
 		$data['lastname'] = $this->getLastname();
 		$data['currency'] = $this->getCurrency();
-		$data['email'] = $this->getEmail();
-		$data['password'] = $this->getPassword();
-		$data['token'] = $this->getToken();
-		$data['loginExpires'] = $this->getLoginExpires();
+		$data['username'] = $this->getUsername();
+		//$data['password'] = $this->getPassword();
+		//$data['token'] = $this->getToken();
+		//$data['loginExpires'] = $this->getLoginExpires();
 		$data['isActive'] = $this->getIsActive();
 
 		$data['accounts'] = array();
@@ -168,10 +168,6 @@ class User implements UserInterface {
 		
 		return $data;
 	}
-
-	public function getUsername(): ?string {
-        return $this->email;
-    }
 
 	public function getRoles(): array {
         $permissions = array();
