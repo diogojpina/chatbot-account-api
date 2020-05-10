@@ -55,6 +55,8 @@ class ExchangeService {
     		if ($value === false) {
     			return false;
     		}
+
+            $value = number_format($value, 2);
     		return array('currencyCode' => $user->getCurrency(), 'value' => $value);
     	}
     }

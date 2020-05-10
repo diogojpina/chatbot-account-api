@@ -157,8 +157,8 @@ class User implements UserInterface {
 		$data['currency'] = $this->getCurrency();
 		$data['username'] = $this->getUsername();
 		//$data['password'] = $this->getPassword();
-		//$data['token'] = $this->getToken();
-		//$data['loginExpires'] = $this->getLoginExpires();
+		$data['token'] = $this->getToken();
+		$data['loginExpires'] = $this->getLoginExpires();
 		$data['isActive'] = $this->getIsActive();
 
 		$data['accounts'] = array();

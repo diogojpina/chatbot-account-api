@@ -36,7 +36,7 @@ class TransactionController extends ApiController {
 
 		$account = $user->getAccountByNumber($accountNumber);
 		if (!$account) {
-			return $this->json(array('success' => false, 'data' => 'Account not found!'));
+			return $this->json(array('success' => false, 'message' => 'Account not found!'));
 		}
 
 		$transactionType = $this->transactionTypeRepo->getByCode('balance');
@@ -62,7 +62,7 @@ class TransactionController extends ApiController {
 
 		$account = $user->getAccountByNumber($accountNumber);
 		if (!$account) {
-			return $this->json(array('success' => false, 'data' => 'Account not found!'));
+			return $this->json(array('success' => false, 'message' => 'Account not found!'));
 		}
 
 		$request = $this->transformJsonBody($request);
@@ -71,17 +71,17 @@ class TransactionController extends ApiController {
 		$currencyMoney = $this->exchangeService->identifyCurrencyValue($user, $value);
 
 		if ($currencyMoney === false) {
-			return $this->json(array('success' => false, 'data' => 'Value invalid!'));
+			return $this->json(array('success' => false, 'message' => 'Value invalid!'));
 		}
 
 		if ($currencyMoney['value'] <= 0) {
-			return $this->json(array('success' => false, 'data' => 'Value has to be positive!'));
+			return $this->json(array('success' => false, 'message' => 'Value has to be positive!'));
 		}
 
 		$myCurrencyMoney = $this->exchangeService->exchange($user, $currencyMoney);
 
 		if ($myCurrencyMoney === false) {
-			return $this->json(array('success' => false, 'data' => 'Problem to convert the currency!'));
+			return $this->json(array('success' => false, 'message' => 'Problem to convert the currency!'));
 		}
 
 		$value = $myCurrencyMoney['value'];
@@ -100,7 +100,8 @@ class TransactionController extends ApiController {
 
 		$this->transactionRepo->add($transaction);
 
-		return $this->json(array('success' => true, 'data' => $transaction->toArray()));
+		$valueFormated = $this->exchangeService->formatValue($user, $account->getBalance());
+		return $this->json(array('success' => true, 'data' => $transaction->toArray(), 'value' => $valueFormated));
 	}
 
 	/**
@@ -111,18 +112,32 @@ class TransactionController extends ApiController {
 
 		$account = $user->getAccountByNumber($accountNumber);
 		if (!$account) {
-			return $this->json(array('success' => false, 'data' => 'Account not found!'));
+			return $this->json(array('success' => false, 'message' => 'Account not found!'));
 		}
 
 		$request = $this->transformJsonBody($request);
-		$value = (float) $request->request->get('value', 0);
+		$value = $request->request->get('value', '');
 
-		if ($value <= 0) {
-			return $this->json(array('success' => false, 'data' => 'Value has to be positive!'));
+		$currencyMoney = $this->exchangeService->identifyCurrencyValue($user, $value);
+
+		if ($currencyMoney === false) {
+			return $this->json(array('success' => false, 'message' => 'Value invalid!'));
 		}
 
+		if ($currencyMoney['value'] <= 0) {
+			return $this->json(array('success' => false, 'message' => 'Value has to be positive!'));
+		}
+
+		$myCurrencyMoney = $this->exchangeService->exchange($user, $currencyMoney);
+
+		if ($myCurrencyMoney === false) {
+			return $this->json(array('success' => false, 'message' => 'Problem to convert the currency!'));
+		}
+
+		$value = $myCurrencyMoney['value'];
+
 		if ($account->getBalance() < $value) {
-			return $this->json(array('success' => false, 'data' => 'Insufficient funds!'));
+			return $this->json(array('success' => false, 'message' => 'Insufficient funds!'));
 		}
 
 		$transactionType = $this->transactionTypeRepo->getByCode('deposit');
@@ -139,7 +154,8 @@ class TransactionController extends ApiController {
 
 		$this->transactionRepo->add($transaction);
 
-		return $this->json(array('success' => true, 'data' => $transaction->toArray()));
+		$valueFormated = $this->exchangeService->formatValue($user, $account->getBalance());
+		return $this->json(array('success' => true, 'data' => $transaction->toArray(), 'value' => $valueFormated));
 	}
 
 }
