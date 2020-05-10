@@ -44,9 +44,9 @@ class AuthenticationController extends ApiController {
     public function logout(Authentication $authentication, Request $request) {
         $request = $this->transformJsonBody($request);
 
-        $token = $request->headers->get('token', '');
+        $user = $this->getUser();
 
-        $success = $authentication->logout($token);
+        $success = $authentication->logout($user->getToken());
 
         return $this->json(['success' => $success]);
     }
