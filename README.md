@@ -6,8 +6,17 @@ Install and Run
 
 Run the project
 
+```
 $ docker-compose up
+```
+
+API will listen at port 8000
+
+Docker-Compose
+------------
+- Database: Mysql 5.7
+- PHP-FPM
+- Ngnix
 
 
 [1]: https://github.com/diogojpina/chatbot-account-front
-[2]: http://localhost:8080
