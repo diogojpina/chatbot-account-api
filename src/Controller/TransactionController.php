@@ -100,7 +100,7 @@ class TransactionController extends ApiController {
 
 		$this->transactionRepo->add($transaction);
 
-		$valueFormated = $this->exchangeService->formatValue($user, $account->getBalance());
+		$valueFormated = $this->exchangeService->formatValue($user, $value);
 		return $this->json(array('success' => true, 'data' => $transaction->toArray(), 'value' => $valueFormated));
 	}
 
@@ -154,7 +154,7 @@ class TransactionController extends ApiController {
 
 		$this->transactionRepo->add($transaction);
 
-		$valueFormated = $this->exchangeService->formatValue($user, $account->getBalance());
+		$valueFormated = $this->exchangeService->formatValue($user, $value);
 		return $this->json(array('success' => true, 'data' => $transaction->toArray(), 'value' => $valueFormated));
 	}
 
