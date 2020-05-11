@@ -1,4 +1,4 @@
 FROM nginx:alpine
 WORKDIR /var/www
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["nginx"]
 EXPOSE 80
